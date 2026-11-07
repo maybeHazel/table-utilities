@@ -40,7 +40,7 @@ end
 	Returns false and 0 if the item is not found in both arrays;
 	Returns nil and 0 if an error occured (missing arguments or array length is lesser than 1)]]
 function Utils.FindValueInArrays(arrayA, ArrayB, value)
-	if not arrayA or not ArrayB or not value then 
+	if not arrayA or not ArrayB then 
 		print("missing arrays or value") 
 		return nil, 0
 	end
@@ -63,7 +63,7 @@ end
 
 --[[looks for indexes with the same value as the specified value inside the array and places them inside of another array which gets returned]]
 function Utils.FindDuplicatedValueInArray(value, array)
-	if not array or not value then return end
+	if not array then return end
 
 	local dupesArray = {}
 	local originalItem = {}
