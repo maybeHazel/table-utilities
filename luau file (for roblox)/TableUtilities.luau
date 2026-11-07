@@ -5,7 +5,7 @@ local Utils = {}
 	--[[Searches for indexes with duplicated values inside the specified array and puts them in two tables which are respectively returned,
 	the first table being a dictionary having the *duplicated values* as *Keys* and the amount of times that the duplicated value 
 	was found as a value, and, an array containing every single duplicated value]]
-function Utils.FindDuplicatedValuesInArray(array: {any}): ({key: number}, {any})
+function Utils.FindDuplicatedValuesInArray(array: {any}): ({[string]: number}, {any})
 	if not array then return warn("missing array") end
 	if typeof(array) ~= "table" then return warn(`expected table but got {typeof(array)} instead`) end
 
@@ -34,7 +34,7 @@ end
 	Returns false and 0 if the item is not found in both arrays;
 	Returns nil and 0 if an error occured (missing arguments or array length is lesser than 1)]]
 function Utils.FindValueInArrays(arrayA: {any}, ArrayB: {any}, value: any): (number | boolean | nil, number)
-	if not arrayA and not ArrayB and not value then 
+	if not arrayA or not ArrayB or not value then 
 		warn("missing arrays or value") 
 		return nil, 0
 	end
@@ -62,21 +62,22 @@ end
 
 --[[looks for indexes with the same value as the specified value inside the array and places them inside of another array which gets returned]]
 function Utils.FindDuplicatedValueInArray(value: any, array: {any}): {any}
-	if not array and not value then return end
+	if not array or not value then return end
 	if typeof(array) ~= "table" then return warn(`expected table but got {typeof(array)} instead`) end
 
 	local dupesArray = {}
-	local filter = {}
+	local originalItem = {}
 
 	for index, item in array do
 		if typeof(index) ~= "number" then continue end
 
-
-		if table.find(filter, item) then
-			table.insert(dupesArray, item)
-
-		else
-			table.insert(filter, item)
+		if item == value then
+			if not table.find(originalItem, item) then
+				table.insert(originalItem, item)
+			else
+				table.insert(dupesArray, value)
+			end
+			
 		end
 
 	end
@@ -103,7 +104,7 @@ end
 	        }
 	    }
 	]]
-function Utils.FindDuplicatedValuesInDictionary(dictionary: {key:any}): ({key: number}, {key: {key: number}})
+function Utils.FindDuplicatedValuesInDictionary(dictionary: {[string]:any}): ({[string]: number}, {[string]: {[string]: number}})
 	if not dictionary then return warn("missing dictonary") end
 	if typeof(dictionary) ~= "table" then return warn(`expected table but got {typeof(dictionary)} instead`) end
 
