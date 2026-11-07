@@ -62,7 +62,7 @@ end
 
 --[[looks for indexes with the same value as the specified value inside the array and places them inside of another array which gets returned]]
 function Utils.FindDuplicatedValueInArray(value: any, array: {any}): {any}
-	if not array or not value then return end
+	if not array then return end
 	if typeof(array) ~= "table" then return warn(`expected table but got {typeof(array)} instead`) end
 
 	local dupesArray = {}
