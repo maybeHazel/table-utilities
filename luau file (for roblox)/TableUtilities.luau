@@ -34,7 +34,7 @@ end
 	Returns false and 0 if the item is not found in both arrays;
 	Returns nil and 0 if an error occured (missing arguments or array length is lesser than 1)]]
 function Utils.FindValueInArrays(arrayA: {any}, ArrayB: {any}, value: any): (number | boolean | nil, number)
-	if not arrayA or not ArrayB or not value then 
+	if not arrayA or not ArrayB then 
 		warn("missing arrays or value") 
 		return nil, 0
 	end
