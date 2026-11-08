@@ -1,5 +1,29 @@
 local Utils = {}
 
+export type Dictionary = {
+	[string]: any
+} --[[ i thought this would show up like {[string]: value} when you hover over something that has this type but, apparently
+	it only shows "Dictionary" so, i guess there wont be any use for this. I'll leave this here just in case though.
+	You can do MyDict: Utils.Dictionary or, since this isnt used anywhere in the codde you can just delete this if you want to.
+	Same thing goes for the Array type.]]
+
+
+export type Array = {[number]: any}
+
+
+function isArray(tbl: {}): boolean
+	local foundKey = false
+
+	for index, _ in tbl do
+		if typeof(index) ~= "number" then
+			foundKey = true
+		end
+	end
+
+	return foundKey
+end
+
+
 --========================================//Array stuff\\======================================================================================
 
 	--[[Searches for indexes with duplicated values inside the specified array and puts them in two tables which are respectively returned,
@@ -77,12 +101,73 @@ function Utils.FindDuplicatedValueInArray(value: any, array: {any}): {any}
 			else
 				table.insert(dupesArray, value)
 			end
-			
+
 		end
 
 	end
 
 	return dupesArray
+end
+
+
+function Utils.ReplaceIndexesInArray(array: {any}, indexes: {[string]: any}, insertNonExistingIndexes: boolean)
+	if not array or not indexes then return end
+
+	for newIndex, item in indexes do
+		local KeyToNumber = tonumber(newIndex)
+		if not KeyToNumber or (KeyToNumber and KeyToNumber < 1) then continue end
+
+		if insertNonExistingIndexes and not array[KeyToNumber] then
+			table.insert(array, item)
+
+		elseif not array[KeyToNumber] and not insertNonExistingIndexes then
+			continue
+		end
+
+		array[KeyToNumber] = item
+	end
+
+end
+
+
+--[[Sets every value of the array to be the specified value, if no value is passed, it sets it to 0.
+startPoint is the index to start from (4 will start counting from index 4 and ignore everything before it) 
+and endPoint is where to end (endPoint 6 will ignore everything past index 6). This is literally C# array.Clear but you can choose a default
+value]]
+function Utils.ResetArray(array: {}, value: any, startPoint: number, endPoint: number): number
+	local changedValues = 0
+
+	if not array then return changedValues end
+	if value == nil then value = 0 end
+
+	if (startPoint > #array) or (startPoint < #array) then
+		warn(`not enough indexes to start from because startPoint is smaller or greater than the elements inside of the array: Sp = {startPoint} \n lenght of the array = {#array}`)
+
+		return changedValues
+	end
+
+	if (endPoint > #array) or (endPoint < #array)  or (endPoint < startPoint) then
+		warn(`endPoint is greater or smaller than the elements inside of the array, or, endPoint is smaller than the startPoint: ep = {endPoint} \n sp = {startPoint} \n lenght of the array = {#array}`)
+
+		return changedValues
+	end
+
+
+
+	for index, item in array do
+		local hasKeys = isArray(array)
+		if hasKeys then
+			warn("Array can only contain number indexes (cant be an dictionary or have (string indexes/keys) exiting out of the function.") 
+			break 
+		end
+
+		if (index < startPoint) or (index > endPoint) then continue end
+		item = value
+		changedValues += 1
+
+	end
+
+	return changedValues
 end
 
 --======================================//Dictionary stuff\\======================================================================================
@@ -144,5 +229,63 @@ function Utils.FindDuplicatedValuesInDictionary(dictionary: {[string]:any}): ({[
 	return TotalOccurencies, sameOccurencies
 end
 
+
+--Looks for keys with the same value as the specified value and returns them inside of another dictonary.
+function Utils.FindInDictionary(dictionary: {[string]: any}, value: any): {[string]: any} | false
+	if not dictionary then return end
+
+	local foundKVs = {}
+	local keyCount = 0
+
+	for key, item in dictionary do
+		if typeof(key) ~= "string" then continue end
+
+		if item == value then
+			foundKVs[key] = value
+			keyCount += 1
+		end
+
+	end
+
+	if keyCount > 0 then
+		return foundKVs
+	end
+
+	return false
+end
+
+
+--[[table.find but for dictionaries. Looks for the first key that has the same value as the specified value and returns it if found.]]
+function Utils.FirstKeyOf(dictionary: {[string]: any}, value: any): string | false
+	if not dictionary then return end
+
+	for key, item in dictionary do
+		if typeof(key) ~= "string" then continue end
+
+		if item == value then
+			return key
+		end
+
+	end
+
+	return false
+end
+
+
+--Looks for an key that's the same as the specified key and returns it.
+function Utils.FindKeyInDictionary(dictionary: {[string]: any}, key: string): string | false
+	if not dictionary or not key then return end
+
+	for _key, _ in dictionary do
+		if typeof(_key) ~= "string" then continue end
+
+		if _key == key then 
+			return key
+		end
+
+	end
+
+	return false
+end
 
 return Utils
