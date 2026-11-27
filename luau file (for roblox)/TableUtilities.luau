@@ -60,12 +60,14 @@ end
 --Combines two tables into one new table that gets returned.
 function Utils.MergeTables(tableA, tableB, ignore: {number | string}): {}
 	local newTable = {}
+	local lengthA = GetLength(tableA)
+	local lengthB = GetLength(tableB)
 	if not ignore then ignore = {} end
-
+	
 	for i, v in tableA do
 		if table.find(ignore, i) then continue end
 
-		if typeof(i) == "string" then
+		if typeof(i) ~= "number" or i > lengthA  or i < 1 then
 			newTable[i] = v
 		else
 			table.insert(newTable, v)
@@ -75,7 +77,7 @@ function Utils.MergeTables(tableA, tableB, ignore: {number | string}): {}
 	for i, v in tableB do
 		if table.find(ignore, i) then continue end
 
-		if typeof(i) == "string" then
+		if typeof(i) ~= "number" or i > lengthB  or i < 1 then
 			newTable[i] = v
 		else
 			table.insert(newTable, v)
@@ -119,7 +121,7 @@ end
 	--[[Searches for indexes with duplicated values inside the specified array and puts them in two tables which are respectively returned,
 	the first table being a dictionary having the *duplicated values* as *Keys* and the amount of times that the duplicated value 
 	was found as a value, and, an array containing every single duplicated value]]
-function Utils.FindDuplicatedValuesInArray(array: {any}): ({[string]: number}, {any})
+function Utils.FindDuplicatedValuesInArray(array: {any}): ({[string]: number}?, {any}?)
 	if not array then return warn("missing array") end
 	if typeof(array) ~= "table" then return warn(`expected table but got {typeof(array)} instead`) end
 
