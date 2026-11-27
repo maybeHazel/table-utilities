@@ -148,20 +148,20 @@ end
 	Returns both the index A and B if the item is found in both arrays;
 	Returns false and 0 if the item is not found in both arrays;
 	Returns nil and 0 if an error occured (missing arguments or array length is lesser than 1)]]
-function Utils.FindValueInArrays(arrayA: {any}, ArrayB: {any}, value: any): (number | boolean, number)
+function Utils.FindValueInArrays(arrayA: {any}, ArrayB: {any}, value: any): (number | boolean, number | boolean)
 	if not arrayA or not ArrayB then 
 		warn("missing arrays") 
-		return false, 0
+		return false, false
 	end
 
 	if typeof(arrayA) ~= "table" or typeof(ArrayB) ~= "table" then
 		warn(`expected table for arrayA and arrayB but got {typeof(arrayA)} for arrayA and {typeof(ArrayB)} for arrayB`)  
-		return false, 0
+		return false, false
 	end
 
 	if #arrayA < 1 or #ArrayB < 1 then
 		warn(`Cannot search value in arrays if they dont have atleast 1 item: A/B {#arrayA}, {#ArrayB}`)
-		return false, 0
+		return false, false
 	end
 
 	local itemInArrA = table.find(arrayA, value)
@@ -171,7 +171,7 @@ function Utils.FindValueInArrays(arrayA: {any}, ArrayB: {any}, value: any): (num
 		return itemInArrA, itemInArrB
 	end
 
-	return false, 0
+	return false, false
 end
 
 
